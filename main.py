@@ -32,7 +32,7 @@ def crawling():
     page_num = urls.getPageNum("0300")
     pageUrls = urls.webUrlsPool(page_num)
     number0 = 0
-    for pageUrl in pageUrls[:1]:
+    for pageUrl in pageUrls:
         number0 += 1
         pageUrl = urls.getJobUrls(pageUrl)
         for x in pageUrl:
@@ -61,14 +61,13 @@ def crawling():
             print("没有待爬的url啦")
             return result, CanNotCrawl
         try:
-            data = spider1.fetchHtml() 
-            flag, data, titleAndSalary = spider1.parsingContent()
+            data = spider1.fetchData() 
+            data, titleAndSalary = spider1.parsingContent()
         except AttributeError:
             continue
-        if flag == -2:
+        if data == -2:
             #print("爬取出错啦")
             errorCounter += 1
-            result[titleAndSalary] = data
             CanNotCrawl.pressIn(url1)
         else:
             titleAndSalary = str(titleAndSalary)

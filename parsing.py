@@ -8,18 +8,6 @@ author = "YiRui Wang"
 import re
 from bs4 import BeautifulSoup
 
-def parsingText(html0,):
-    """
-    输入待解析html-来自fetchUrl()，返回解析的结果 （以列表的形式）
-    """
-    html0 = decoding(html0, 'gb18030')
-    jobInfo = findJobInfo(html0)
-    # ----从职位信息中抓取工作职责（data1）,任职要求(data2)与职位薪资与公司名称（titleAndSalary）
-    data1 = findText(jobInfo, r"[\u4e00-\u9fa5]{0-2}职责|描述")
-    data2 = findText(jobInfo, r"[\u4e00-\u9fa5]{0-2}[要求|资格]")
-    titleAndSalary = findTitle(jobInfo)
-    return data1, data2, titleAndSalary
-
 def decoding(data,form):
     """
     将输入的data解码为form格式的文本，并返回bs4对象
@@ -55,7 +43,6 @@ def findText(data,text):
     aimPattern = re.compile(text)
     numPattern = re.compile(r"^[1-9①②③④⑤⑥⑦⑧⑨].*")
     HanZiPattern = re.compile(r"[\u4e00-\u9fa5]*")
-    # lengthPattern = re.compile(r"^")
     #----迭代data子tag
     dataChildren = [x for x in data.children]
     for x in dataChildren:
@@ -74,9 +61,9 @@ def findText(data,text):
                     y = x.get_text()#如果没有出现exception的话，y在这里会被转化为字符串
                 except AttributeError:
                     y = ""#如果出现exception的话，y在这里等于x，但通常是空的，但是不排除可能不是空的，所以把它改成“”
-                if re.match(numPattern,y) != None:#从错误栈上看，是这个调用re包里的函数的时候出的问题
+                if re.match(numPattern,y) != None:#从错误栈上看，是这个调用re包里的函数的时候出的问题，你看
                     #print("数字match")
-                    aimString.append(y)                   
+                    aimString.append(y)                    
                 elif re.match(HanZiPattern,y) != None:
                     flag = 1
                     #print("下一个为：",y)

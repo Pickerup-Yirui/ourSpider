@@ -9,13 +9,12 @@ author = "YiRui Wang"
 import requests
 from bs4 import BeautifulSoup as bf
 import parsing as p
-from parsing import parsingText as pt 
 
 class Spider():
     """
     一个根据读取的URL爬取相关数据的da蜘蛛
     eatURL(self, pool):从url库中取得一个url，存入体内，返回该url
-    fetchHtml(self,)：根据体内的url爬取数据,存入体内，返回数据
+    fetchData(self,)：根据体内的url爬取数据,存入体内，返回数据
     parsingContent(self,):根据体内爬取的数据，提取出所需要素，返回要素
     """
     def __init__(self,):
@@ -44,7 +43,7 @@ class Spider():
         self.haveParsedCotent = 0
         return self.url
             
-    def fetchHtml(self, ):
+    def fetchData(self, ):
         """
         根据体内的url爬取data,存入体内，返回data
         若无未爬url，则返回-1；
@@ -58,23 +57,25 @@ class Spider():
         
     def parsingContent(self,):
         """
-        根据体内爬取的data(html)，提取出所需要素，返回要素
+        根据体内爬取的data，提取出所需要素，返回要素
         若要素已解析，返回-1
         * 若data中目标要素无法获取，返回0 *
         """
         if self.haveParsedCotent == 2:
             return -1
-        #----从职位信息中抓取工作职责（data1）,任职要求(data2)与职位薪资与公司名称（titleAndSalary）
-        data1, data2, titleAndSalary = pt(self.data)
-        #----识别找不到关键词（-2）或数字（0）的情况，返回-2与职位薪资与公司名称
+        data = p.decoding(self.data, "gb18030")
+        titleAndSalary = p.findTitle(data)
+        data = p.findJobInfo(data,)
+        data1 = p.findText(data, r"[\u4e00-\u9fa5]{2}职责")
+        data2 = p.findText(data, r"[\u4e00-\u9fa5]{2}[要求|资格]")
         if data1 == -2 or data1 == 0:
             #print("找不到职责")
-            return -2, [data2,], titleAndSalary
+            data1 = p.findText(data, r".*")
+            return -2, titleAndSalary
         if data2 == -2 or data2 == 0:
             #print("找不到要求/资格")
-            return -2, [data1,], titleAndSalary
-        # ----print("data",data)
-        # ----建立工作职责与任职要求的列表
+            return -2, titleAndSalary
+        #print("data",data)
         data = [data1, data2]
-        return 1, data, titleAndSalary
+        return data, titleAndSalary
         
