@@ -20,9 +20,9 @@ A series of classes and functions created for data crawling.
 7. Visual Studio Code
 
 ## Maintainers
-Yirui Wang
+@Yirui Wang
 
-Yilin li
+@Yilin Li
 
 ## License
-MIT
+[MIT](https://github.com/Pickerup-Yirui/ourSpider/blob/master/LICENSE)
