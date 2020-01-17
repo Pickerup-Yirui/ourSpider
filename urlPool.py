@@ -53,5 +53,3 @@ if __name__ == "__main__":
     print(testPool.pressIn(10))
     print(testPool.popOut())
     print(testPool.howMany())
-
-    
