@@ -7,6 +7,25 @@ author = "YiRui Wang"
 """
 import re
 from bs4 import BeautifulSoup
+import bs4
+
+def parsingText(html0,keyWords1,keyWords2):
+    """
+    输入待解析html，返回解析的结果 （以列表的形式）
+    params:
+        html0: html
+        keyWords1: 待爬取结果的第一个关键字
+        keyWords2: 待爬取结果的第二个关键字
+    """
+    html0 = decoding(html0, 'gb18030')
+    jobInfo = findJobInfo(html0)
+    if jobInfo is None:
+        return -3,-3,-3
+    titleAndSalary = findTitle(html0)
+    # ----从职位信息中抓取工作职责（data1）,任职要求(data2)与职位薪资与公司名称（titleAndSalary）
+    data1 = findText(jobInfo, r"[\u4e00-\u9fa5]{2}[职责|描述]")
+    data2 = findText(jobInfo, r"[\u4e00-\u9fa5]{2}"+keyWords2)
+    return data1, data2, titleAndSalary
 
 def decoding(data,form):
     """
@@ -27,7 +46,7 @@ def findJobInfo(data):
         data：（bs4对象）被查找的html
     """
     jobInfo = data.find('div',class_='bmsg job_msg inbox')
-    # jobInfo = jobInfo.get_text() #去除标签
+    # jobInfo = jobInfo.text() #去除标签
     return jobInfo
 
 def findText(data,text):
@@ -43,27 +62,32 @@ def findText(data,text):
     aimPattern = re.compile(text)
     numPattern = re.compile(r"^[1-9①②③④⑤⑥⑦⑧⑨].*")
     HanZiPattern = re.compile(r"[\u4e00-\u9fa5]*")
+    # lengthPattern = re.compile(r"^")
     #----迭代data子tag
     dataChildren = [x for x in data.children]
     for x in dataChildren:
         #print("x是",x)
-        try:
+        #print("type(x)是", type(x))
+        if type(x) != bs4.element.NavigableString:
             y = x.get_text()
-        except AttributeError:
-            y = ""#同理可得
-        #print("y是",y)
+        else:
+            y = ""
         if re.match(aimPattern, y) != None:
             aimString.append(y)
             flag = 0
             while flag == 0:
-                x = x.next_sibling
-                try:
-                    y = x.get_text()#如果没有出现exception的话，y在这里会被转化为字符串
-                except AttributeError:
-                    y = ""#如果出现exception的话，y在这里等于x，但通常是空的，但是不排除可能不是空的，所以把它改成“”
-                if re.match(numPattern,y) != None:#从错误栈上看，是这个调用re包里的函数的时候出的问题，你看
+                if x != None:
+                    x = x.next_sibling
+                else:
+                    return 0
+                if type(x) == bs4.element.NavigableString or x == None:
+                    #print("NavigatableString x is:", x)
+                    y == ""
+                else:
+                    y = x.get_text()
+                if re.match(numPattern,y) != None:
                     #print("数字match")
-                    aimString.append(y)                    
+                    aimString.append(y)                   
                 elif re.match(HanZiPattern,y) != None:
                     flag = 1
                     #print("下一个为：",y)
@@ -73,23 +97,37 @@ def findText(data,text):
                     return aimString  
     return -2
             
+def findTextHelp():
+    """
+    findText的辅助函数,输入bs4目标段的子对象，返回解析后提取的
+    """
+    pass
+
 def findTitle(data):
     """
-    寻找jobUrl的title、公司、薪水（来作为字典的key）
+    输入解析后的bs4对象,返回jobUrl的title、公司、薪水信息的元组
     params:
         data:使用bf4 解析好的html文档
     """
     title = data.find('h1')
-    try:
+    if title is None:
+        #print("None title's html data",data)
+        salary = ""
+        title = ""
+        titleAndSalary = -1
+    else:
         salary = title.next_sibling
         salary = salary.text
-    except AttributeError:
-        salary = ""
-    title = title.text
+        title = title.text
     company = data.find('div', class_='com_msg')
-    comName = company.get_text()
-    comName = comName[:-1]
-    titleAndSalary = (title, salary, comName)
+    if company == None:
+        #print("None company's html data",data)
+        comName = ""
+        titleAndSalary = -2
+    else:
+        comName = company.get_text()
+        comName = comName[:-1]
+        titleAndSalary = (title, salary, comName)
 
     return titleAndSalary
 

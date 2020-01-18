@@ -1,7 +1,7 @@
 """
 author = "YiRui Wang"
 
-定义了一系列抓取51jobs页面上urls的函数
+定义了一系列抓取51jobs页面上urls的函数（包）
 
 创建于2020 1 16
 
@@ -14,11 +14,9 @@ getJobUrls(pageUrl):根据pageUrl,得到该page上的jobUrl
 import requests
 from bs4 import BeautifulSoup
 
-def getPageNum(num):
+def getPageNum():
     """
     根据初始url找到并返回网页总页数
-    params：
-        num：初始url中的部分数字，随着搜索岗位的变化而变化，市场营销--0300
     """
     # keyword = quote(keyword, safe='/:?=')
     
