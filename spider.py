@@ -10,6 +10,7 @@ import requests
 from bs4 import BeautifulSoup as bf
 import parsing
 from parsing import parsingText as pt 
+import main
 
 class Spider():
     """
@@ -86,9 +87,11 @@ class Spider():
         if bs41 == 0:
             return 0, [], ()
         #解析岗位信息段，找出目标信息
-        #data1 = parsing.findText(bs41, r"[\u4e00-\u9fa5]{2}"+keyWords1)
-        data1 = parsing.findText1(bs41)
-        data2 = parsing.findText(bs41, r"[\u4e00-\u9fa5]{2}"+keyWords2)
+        if main.URL_BUILD_MODE == 0:
+            data1 = parsing.findText(bs41, r"[\u4e00-\u9fa5]{0,2}"+keyWords1)
+        else:
+            data1 = parsing.findText1(bs41)
+        data2 = parsing.findText(bs41, r"[\u4e00-\u9fa5]{0,2}"+keyWords2)
         errorCounter = 0
         flag = 1
         if data1 == -2 or data1 == 0:

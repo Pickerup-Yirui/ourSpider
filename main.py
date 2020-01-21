@@ -9,24 +9,17 @@ author = ”YiRui Wang"
 
 
 #生成URL集合的模式
-URL_BUILD_MODE = 2  #--生成新的URL集合：  0
+URL_BUILD_MODE = 0  #--生成新的URL集合：  0
                     #--读取已有的URL仓库：1
                     #--使用单独URL测试：  2
 
-
-#生成URL集合的根URL
-ROOT_URL = "https://search.51job.com/list/070300%252C020000,000000,0000,00,9,99,\
-        %25E6%2595%25B0%25E5%25AD%2597%25E8%2590%25A5%25E9%2594%2580,2,1.html?\
-        lang=c&stype=&postchannel=0000&workyear=99&cotype=99&degreefrom=99&jobterm=99&\
-        companysize=99&providesalary=99&lonlat=0%2C0&radius=-1&ord_field=0&confirmdate=9&\
-        fromType=&dibiaoid=0&address=&line=&specialarea=00&from=&welfare="
 
 #用于测试的单独URL
 TEST_URL = "https://jobs.51job.com/shanghai-jdq/119254718.html?s=01&t=0"
 
 
 #用于定位目标语句的关键词(正则表达式)
-KEY_WORDS1 = r"[职责|描述]"
+KEY_WORDS1 = r"[职责|描述|工作]"
 KEY_WORDS2 = r"[要求|资格|条件]"
 
 
